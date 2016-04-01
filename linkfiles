@@ -3,7 +3,7 @@
 require 'fileutils'
 
 SOURCEDIR = "~/"
-LINKDIR = "~/repos/dotfiles/"
+LINKDIR = "./"
 
 # Modify this hash to set what you want to sync.
 # The format is link_hash = {symbolic_link, original_file}

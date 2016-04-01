@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+
+SOURCEDIR = "~/"
+LINKDIR = "~/repos/dotfiles/"
+
+# Modify this hash to set what you want to sync.
+# The format is link_hash = {symbolic_link, original_file}
+link_hash = {".vim"                                      => "vim/.vim",
+             ".vimrc"                                    => "vim/.vimrc"}
+
+link_hash.each do |link, source|
+    link = File.expand_path(SOURCEDIR + link)
+    sync_file = File.expand_path(LINKDIR + source)
+
+    # Remove the files if they already exist.
+    if File.file?(link)
+        puts "#{link} exists. Removing."
+        File.unlink(link)
+    elsif File.directory?(link)
+        puts "#{link} exists. Removing."
+        FileUtils.rm_rf(link)
+    end
+
+    # If the link will reside within a non-existent directory, create it.
+    if !File.exists?(File.split(link)[0])
+        FileUtils.mkdir_p(File.split(link)[0])
+    end
+
+    # Link to the source files if they exist
+    if File.exists?(sync_file)
+        puts "Now linking #{link} to #{sync_file}"
+        begin
+            File.symlink(sync_file, link)
+        rescue
+            puts "failed"
+        end
+    else
+        puts "#{sync_file} not in sync. Skipping."
+    end
+
+    puts
+end
